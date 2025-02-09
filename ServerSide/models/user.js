@@ -4,14 +4,21 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     name:{type:String, required:true},
     email:{type:String, required:true, unique:true},
-    password:{type:String, required:true},
+    password:{type:String, required:function(){
+        return this.authProvider === "email";
+    }},
     profilePicture:{type:String, default:""},
-    role:{type:String, enum:["admin","member","viewer"], default:"user"},
+    role:{type:String, enum:["admin","member","viewer"], default:"member"},
     authProvider:{type:String, enum:["email","google"], default:"email"},
     googleId:{type:String, default:""},
     bio: { type: String, default: "" },
     isVerified: { type: Boolean, default: false }, // Email verified status
     status: { type: String, enum: ["active", "suspended", "deleted"], default: "active" }, // Account status
+    emailVerificationToken: { type: String, default: null }, // Email verification token
+    emailVerificationExpiry: { type: Date, default: null }, // Token expiration
+    emailVerifiedAt: { type: Date, default: null }, // When the email was verified
+    passwordResetToken: { type: String, default: null }, // Password reset token
+    passwordResetExpiry: { type: Date, default: null }, // Token expiration
 
 
     projects: [
